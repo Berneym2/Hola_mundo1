@@ -1,0 +1,368 @@
+using System;
+
+namespace ToTiTo
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            char [,] tablero = new char[3, 3];
+
+            InicializarTablero(ref tablero);
+            
+            string nombre1 = "";
+            string nombre2 = "";
+            
+            System.Console.WriteLine("BIENVENIDOS AL JUEGO TOTITO");
+            System.Console.WriteLine("___________________________");
+
+            System.Console.WriteLine();
+
+            
+
+            //Pedimos el nombre al jugador 1
+            while(nombre1.Length < 2)
+            {
+                System.Console.WriteLine("Jugador 1, Jugaras con la X, Introducir nombre ");
+                nombre1 =Console.ReadLine();
+                System.Console.WriteLine();
+
+                if(nombre1.Length < 2)
+                {
+                    System.Console.WriteLine("Introducir un nombre mas largo.");
+
+                }
+            }
+            //Pedimos el Nombre al Jugardor 2
+            while(nombre2.Length < 2)
+            {
+                System.Console.WriteLine("Jugador 2, Jugaras con la O,  Introducir nombre ");
+                nombre2 =Console.ReadLine();
+                System.Console.WriteLine();
+
+                if(nombre2.Length < 2)
+                {
+                    System.Console.WriteLine("Introducir un nombre mas largo.");
+                    
+                }
+            }
+
+            bool Player1 = true;
+
+            while(!HayGanador(tablero))
+            {
+                Console.Clear();
+
+                System.Console.WriteLine("BIENVENIDOS AL JUEGO TOTITO");
+                System.Console.WriteLine("___________________________");
+
+                System.Console.WriteLine();
+                System.Console.WriteLine(TableroVisual(ref tablero));
+                
+                string nombreplayer= "";
+
+                if(Player1)
+                {
+                    nombreplayer = nombre1;
+                }
+                else 
+                {
+                    nombreplayer = nombre2; 
+                }
+                
+
+                string coordenada = "";
+
+                while(!CoordenadaValidad(coordenada) || (Estaocupada(tablero, coordenada)))
+                {
+                    System.Console.WriteLine($"{nombreplayer} Introduce la coordenada donde quieres jugar.");
+                    System.Console.WriteLine("Ejemplo A1.");
+
+                    coordenada=Console.ReadLine().ToUpper();
+
+                    if(!CoordenadaValidad(coordenada))
+                    {
+                        System.Console.WriteLine("___________________________________");
+                        System.Console.WriteLine("      La coordenada no valida      " );
+                    }
+
+                    if(Estaocupada(tablero, coordenada))
+                    {
+                        System.Console.WriteLine("___________________________________"); 
+                        System.Console.WriteLine("La coordenada ya ha sido utilizada.");
+                        System.Console.WriteLine("___________________________________");
+                        System.Console.WriteLine("Introduzca otra");
+                    }
+                }
+
+                char caracterusado = ' ';
+
+                if (Player1)
+                {
+                    caracterusado = 'X';
+                }
+
+                else
+                {
+                    caracterusado = 'O';
+                }
+
+                Agregarcoordenadas(tablero, coordenada, caracterusado);
+                
+                if(HayGanador(tablero)) 
+                {
+                    break;
+                }
+                if(TableroCompleto(ref tablero))
+                {
+                    break;
+                }
+
+                if(TableroCompleto(ref tablero))
+                {
+                    break;
+                }
+                Player1 =!Player1;
+                                
+                    
+            
+            }
+
+            if(HayGanador(tablero))
+
+            {
+                Console.Clear();
+
+                System.Console.WriteLine("BIENVENIDOS AL JUEGO TOTITO");
+                System.Console.WriteLine("___________________________");
+
+                System.Console.WriteLine();
+                System.Console.WriteLine(TableroVisual(ref tablero));
+                System.Console.WriteLine("!FIN DEL JUEGO¡");
+                if(Ganador(ref tablero) == 'X')
+                {
+                    System.Console.WriteLine($"{nombre1} ha ganado esta vez");
+                }
+                else
+                {
+                    System.Console.WriteLine($"{nombre2} ha ganado esta vez");
+                }
+                
+                
+            }
+
+            if(HayGanador(tablero))
+
+            {
+                Console.Clear();
+
+                System.Console.WriteLine("BIENVENIDOS AL JUEGO TOTITO");
+                System.Console.WriteLine("___________________________");
+
+                System.Console.WriteLine();
+                System.Console.WriteLine(TableroVisual(ref tablero));
+                System.Console.WriteLine("!FIN DEL JUEGO¡");
+                System.Console.WriteLine("EMPATE............");
+            }
+            
+        
+            
+            Console.ReadKey();
+
+            
+        }
+        static void InicializarTablero(ref char[,] tablero)
+        {
+            for (int contador1 = 0; contador1 < 3; contador1++)
+            {
+                for (int contador2 = 0; contador2 < 3; contador2++)
+                 {
+                     tablero[contador1, contador2] = ' ';
+                 }   
+            }
+        }
+
+        static string TableroVisual(ref char[,] tablero)
+        {
+            string tv = "";
+            tv = "   1   2   3  " + Environment.NewLine;;
+            tv +=  " ┌───┬───┬───┐" + Environment.NewLine;
+            tv += $"A│ {tablero[0,0]} │ {tablero[0,1]} │{tablero[0,2]}  │" + Environment.NewLine; 
+            tv += " ├───┼───┼───┤" + Environment.NewLine;
+            tv += $"B│ {tablero[1,0]} │ {tablero[1,1]} │{tablero[1,2]}  │" + Environment.NewLine;
+            tv += " ├───┼───┼───┤" + Environment.NewLine;
+           tv += $"C│ {tablero[2,0]} │ {tablero[2,1]} │{tablero[2,2]}  │" + Environment.NewLine;
+            tv += " └───┴───┴───┘" + Environment.NewLine;
+
+            return tv;
+        }
+    
+        static char Ganador(ref char[,] tablero)
+        {
+            if(tablero[0,0] == tablero[0,1] && tablero[0,1] == tablero[0,2] && tablero[0,0] != ' ')
+            {
+                return tablero[0,0];
+            } 
+
+            if(tablero[1,0] == tablero[1,1] && tablero[1,1] == tablero[1,2] && tablero[1,0] != ' ')
+            {
+                return tablero[1,0];
+            }
+
+            if(tablero[2,0] == tablero[2,1] && tablero[2,1] == tablero[2,2] && tablero[2,0] != ' ')
+            {
+                return tablero[2,0];
+            }
+
+            if(tablero[0,0] == tablero[1,0] && tablero[1,0] == tablero[2,0] && tablero[0,0] != ' ')
+            {
+                return tablero[0,0];
+            } 
+
+            if(tablero[0,1] == tablero[1,1] && tablero[1,1] == tablero[2,1] && tablero[0,1] != ' ')
+            {
+                return tablero[0,1];
+            } 
+
+            if(tablero[0,2] == tablero[1,2] && tablero[1,2] == tablero[2,2] && tablero[0,0] != ' ')
+            {
+                return tablero[0,2];
+            } 
+
+            if(tablero[0,2] == tablero[1,1] && tablero[1,1] == tablero[2,0] && tablero[0,2] != ' ')
+            {
+                return tablero[0,0];
+            } 
+
+            return ' ';
+
+    
+        } 
+        
+
+        static bool HayGanador(char[,] tablero)
+        {
+            return Ganador(ref tablero) != ' ';
+        }
+
+        static bool Estaocupada(char[,] tablero, int x, int y)
+        {
+            if(x<0 || x>2)
+            {
+                throw new ArgumentException("El valor de X debe ser 0, 1 o 2", "x");
+            }
+
+             if(y<0 || y>2)
+            {
+                throw new ArgumentException("El valor de Y debe ser 0, 1 o 2", "Y");
+            }
+
+            return tablero[x,y] != ' ';
+        }
+
+        static bool Estaocupada(char[,] tablero, string Coordenadas)
+        {
+            Coordenadas=Coordenadas.ToUpper();
+
+            switch(Coordenadas)
+            { 
+                case "A1":
+                    return Estaocupada(tablero, 0,0);
+                case "A2":
+                    return Estaocupada(tablero, 0,1);
+                case "A3":
+                    return Estaocupada(tablero, 0,2);
+                case "B1":
+                    return Estaocupada(tablero, 1,0);
+                case "B2":
+                    return Estaocupada(tablero, 1,1);
+                case "B3":
+                    return Estaocupada(tablero, 1,2);
+                 case "C1":
+                    return Estaocupada(tablero, 2,0);
+                case "C2":
+                    return Estaocupada(tablero, 2,1);
+                case "C3":
+                    return Estaocupada(tablero, 2,2);
+            }
+            return false;
+        }
+        static void Agregarcoordenadas(char[,] tablero, string Coordenadas, char letra)
+        {
+            Coordenadas=Coordenadas.ToUpper();
+
+            switch(Coordenadas)
+            {
+                case "A1":
+                    tablero[0,0]=letra;
+                    return;
+                case "A2":
+                    tablero[0,1]=letra;
+                    return;
+                case "A3":
+                    tablero[0,2]=letra;
+                    return;
+                 case "B1":
+                    tablero[1,0]=letra;
+                    return;
+                case "B2":
+                    tablero[1,1]=letra;
+                    return;
+                case "B3":
+                    tablero[1,2]=letra;
+                    return;
+                 case "C1":
+                    tablero[2,0]=letra;
+                    return;
+                case "C2":
+                    tablero[2,1]=letra;
+                    return;
+                case "C3":
+                    tablero[2,2]=letra;
+                    return;
+            }
+        }
+
+
+        static bool CoordenadaValidad(string Coordenadas)
+        {
+             Coordenadas=Coordenadas.ToUpper();
+
+            switch(Coordenadas)
+            { 
+                case "A1":
+                case "A2":
+                case "A3":
+                case "B1":
+                case "B2":
+                case "B3":
+                case "C1":
+                case "C2":
+                case "C3":
+                    return true;
+                default:
+                    return false;
+            }
+        } 
+
+        static bool TableroCompleto(ref char [,] tablero)
+        {
+            if(tablero[0 , 0] != ' ' && tablero[0,1] != ' ' && tablero[0,2] != ' '
+            && tablero[1 , 0] != ' ' && tablero[1,1] != ' ' && tablero[1,2] != ' '
+            && tablero[2 , 0] != ' ' && tablero[2,1] != ' ' && tablero[2,2] != ' ')
+        
+            
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+            
+                
+            
+        }    
+
+    }
+}
